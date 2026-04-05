@@ -1,10 +1,7 @@
+python-telegram-bot==20.7
+psycopg2-binary
+openai
+requests
 flask
 flask-cors
 gunicorn
-requests
-openai
-google-generativeai
-python-telegram-bot==20.7
-psycopg2-binary
-kerykeion
-reportlab
