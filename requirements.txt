@@ -1,4 +1,6 @@
 python-telegram-bot==20.7
-Flask
+flask
 psycopg2-binary
+openai
+requests
 gunicorn
