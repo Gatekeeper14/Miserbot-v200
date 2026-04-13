@@ -4,3 +4,4 @@ psycopg2-binary
 openai
 requests
 gunicorn
+stripe
