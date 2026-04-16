@@ -1,19 +1,23 @@
-from database import get_conn,release_conn
+from services.music_catalog import get_all_songs
 
-async def music(update,context):
 
-    conn=get_conn()
-    cur=conn.cursor()
+async def music(update, context):
 
-    cur.execute("SELECT title,file_id FROM songs ORDER BY id DESC")
-
-    songs=cur.fetchall()
-
-    release_conn(conn)
+    songs = get_all_songs()
 
     if not songs:
-        await update.message.reply_text("Catalog empty.")
+
+        await update.message.reply_text(
+            "🎧 Music Hub\n\n"
+            "Catalog is currently empty.\n"
+            "New releases coming soon."
+        )
         return
 
-    for title,file_id in songs:
-        await update.message.reply_audio(file_id,caption=title)
+    msg = "🎧 Music Hub\n\n"
+
+    for song in songs:
+
+        msg += f"{song[1]} — {song[2]}  (${song[3]})\n"
+
+    await update.message.reply_text(msg)
