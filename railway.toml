@@ -2,5 +2,4 @@
 builder = "nixpacks"
 
 [deploy]
-rootDirectory = "miserbot"
-startCommand = "python main.py"
+startCommand = "python -m miserbot.main"
