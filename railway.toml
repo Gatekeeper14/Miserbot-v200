@@ -1,3 +1,6 @@
+[build]
+builder = "nixpacks"
+
 [deploy]
 startCommand = "python main.py"
-numReplicas = 1
+rootDirectory = "miserbot"
