@@ -2,4 +2,4 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "python -m miserbot.main"
+startCommand = "cd miserbot && python main.py"
