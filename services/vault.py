@@ -1,40 +1,17 @@
-from database import get_conn, release_conn
+from telegram import Update
+from telegram.ext import ContextTypes
 
 
-def unlock_vault(user):
+async def vault(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    conn = get_conn()
-    cur = conn.cursor()
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS vault(
-        user_id BIGINT PRIMARY KEY,
-        unlocked BOOLEAN DEFAULT FALSE,
-        super_vault BOOLEAN DEFAULT FALSE
+    message = (
+        "🔐 Miserbot Vault\n\n"
+        "Exclusive content is stored inside the Vault.\n\n"
+        "Unlock access by:\n"
+        "• Supporting the ecosystem\n"
+        "• Staking MiserCoins\n"
+        "• Completing missions\n\n"
+        "Vault drops will appear here."
     )
-    """)
 
-    cur.execute("""
-    INSERT INTO vault(user_id, unlocked)
-    VALUES(%s, TRUE)
-    ON CONFLICT(user_id)
-    DO UPDATE SET unlocked=TRUE
-    """, (user,))
-
-    conn.commit()
-    release_conn(conn)
-
-
-def unlock_super_vault(user):
-
-    conn = get_conn()
-    cur = conn.cursor()
-
-    cur.execute("""
-    UPDATE vault
-    SET super_vault = TRUE
-    WHERE user_id = %s
-    """, (user,))
-
-    conn.commit()
-    release_conn(conn)
+    await update.message.reply_text(message)
