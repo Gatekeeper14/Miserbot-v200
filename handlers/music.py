@@ -1,23 +1,33 @@
-from services.music_catalog import get_all_songs
+from telegram import Update
+from telegram.ext import ContextTypes
+from database import get_conn, release_conn
 
 
-async def music(update, context):
+async def music(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    songs = get_all_songs()
+    conn = get_conn()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT title, artist, price
+        FROM songs
+        ORDER BY created_at DESC
+        LIMIT 20
+    """)
+
+    songs = cur.fetchall()
+    release_conn(conn)
 
     if not songs:
-
         await update.message.reply_text(
             "🎧 Music Hub\n\n"
-            "Catalog is currently empty.\n"
-            "New releases coming soon."
+            "No songs uploaded yet."
         )
         return
 
     msg = "🎧 Music Hub\n\n"
 
-    for song in songs:
-
-        msg += f"{song[1]} — {song[2]}  (${song[3]})\n"
+    for title, artist, price in songs:
+        msg += f"{title} — {artist} (${price})\n"
 
     await update.message.reply_text(msg)
