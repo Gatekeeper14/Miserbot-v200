@@ -81,7 +81,6 @@ def init_db():
             "CREATE TABLE IF NOT EXISTS voice_wall (id SERIAL PRIMARY KEY, telegram_id BIGINT, username TEXT, file_id TEXT, status TEXT DEFAULT 'pending', submitted_at TIMESTAMP DEFAULT NOW())",
             "CREATE TABLE IF NOT EXISTS song_likes (telegram_id BIGINT, song_id INT, PRIMARY KEY (telegram_id, song_id))",
             "CREATE TABLE IF NOT EXISTS song_requests (id SERIAL PRIMARY KEY, telegram_id BIGINT, username TEXT, song_title TEXT, played BOOLEAN DEFAULT FALSE, requested_at TIMESTAMP DEFAULT NOW())",
-            "CREATE TABLE IF NOT EXISTS radio_state (id INT PRIMARY KEY DEFAULT 1, current_index INT DEFAULT 0, last_updated TIMESTAMP DEFAULT NOW(), streak_days INT DEFAULT 0, last_streak_date DATE)",
             "CREATE TABLE IF NOT EXISTS radio_history (id SERIAL PRIMARY KEY, file_id TEXT, title TEXT, played_at TIMESTAMP DEFAULT NOW())",
             "CREATE TABLE IF NOT EXISTS radio_queue (id SERIAL PRIMARY KEY, file_id TEXT, title TEXT, item_type TEXT, position INT DEFAULT 0, added_at TIMESTAMP DEFAULT NOW())",
             "CREATE TABLE IF NOT EXISTS vault_songs (id SERIAL PRIMARY KEY, title TEXT, file_id TEXT, required_points INTEGER DEFAULT 1000, price_usd FLOAT DEFAULT 50, uploaded_at TIMESTAMP DEFAULT NOW())",
@@ -110,7 +109,21 @@ def init_db():
         for tbl in tables:
             cur.execute(tbl)
 
-        cur.execute("INSERT INTO radio_state (id, current_index) VALUES (1, 0) ON CONFLICT DO NOTHING")
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS radio_state (
+                id INT PRIMARY KEY DEFAULT 1,
+                last_updated TIMESTAMP DEFAULT NOW()
+            )
+        """)
+        for col, defn in [
+            ("current_index", "INT DEFAULT 0"),
+            ("streak_days", "INT DEFAULT 0"),
+            ("last_streak_date", "DATE"),
+        ]:
+            cur.execute(f"ALTER TABLE radio_state ADD COLUMN IF NOT EXISTS {col} {defn}")
+
+        cur.execute("INSERT INTO radio_state (id) VALUES (1) ON CONFLICT DO NOTHING")
+
         conn.commit()
         print("DATABASE READY v18.000")
     finally:
