@@ -79,7 +79,7 @@ async def wisdom_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 import random
 uid = update.effective_user.id
 name = update.effective_user.username or str(uid)
-pts = award_points(uid, “wisdom”, name)
+pts = award_points(uid, "wisdom", name)
 await update.message.reply_text(f”Royal Wisdom\n\n{random.choice(QUOTES)}\n\n+{pts} MiserCoins”)
 
 async def fitness_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
