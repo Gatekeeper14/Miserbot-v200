@@ -1,42 +1,18 @@
-from database import get_conn,release_conn
-from datetime import date
+from telegram import Update
+from telegram.ext import ContextTypes
 
-REWARD=10
 
-def claim_daily(user_id):
+async def missions(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    conn=get_conn()
-    cur=conn.cursor()
-
-    today=date.today()
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS missions(
-        user_id BIGINT PRIMARY KEY,
-        last_claim DATE
-    )
-    """)
-
-    cur.execute("SELECT last_claim FROM missions WHERE user_id=%s",(user_id,))
-    row=cur.fetchone()
-
-    if row and row[0]==today:
-        release_conn(conn)
-        return False
-
-    cur.execute("""
-    INSERT INTO missions(user_id,last_claim)
-    VALUES(%s,%s)
-    ON CONFLICT(user_id)
-    DO UPDATE SET last_claim=%s
-    """,(user_id,today,today))
-
-    cur.execute(
-    "UPDATE users SET coins=coins+%s WHERE user_id=%s",
-    (REWARD,user_id)
+    message = (
+        "🎯 Miserbot Missions\n\n"
+        "Complete tasks to earn MiserCoins.\n\n"
+        "Available Missions:\n\n"
+        "• Join Community Channel\n"
+        "• Share Miserbot with friends\n"
+        "• Listen to Radio\n"
+        "• Support the ecosystem\n\n"
+        "More missions coming soon."
     )
 
-    conn.commit()
-    release_conn(conn)
-
-    return True
+    await update.message.reply_text(message)
