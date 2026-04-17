@@ -1,21 +1,17 @@
-from telegram import Update
-from telegram.ext import ContextTypes
+from config import BOOKING_TERMS, SERVICES, BOOKING_EMAIL
 
+def get_booking_terms():
+    return BOOKING_TERMS
 
-async def events(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def get_service(key):
+    return SERVICES.get(key)
 
-    message = (
-        "🎤 Live Events & Bookings\n\n"
-        "Book Bazragod for:\n\n"
-        "• Club Performances\n"
-        "• Private Events\n"
-        "• Video Cameos\n"
-        "• Studio Sessions\n\n"
-        "Booking Packages:\n\n"
-        "small_club — $2500\n"
-        "medium_club — $5000\n"
-        "large_club — $15000\n\n"
-        "Contact management for full booking details."
-    )
-
-    await update.message.reply_text(message)
+def save_booking(uid, username, service_type, notes=""):
+    from database import get_db, release_db
+    conn = get_db(); cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO bookings (telegram_id, username, service_type, notes) VALUES (%s,%s,%s,%s) RETURNING id", (uid, username, service_type, notes))
+        bid = cur.fetchone()[0]; conn.commit()
+        return bid
+    finally:
+        release_db(conn)
