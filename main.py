@@ -28,6 +28,12 @@ except Exception:
 
 openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 flask_app = Flask(__name__)
+@flask_app.after_request
+def add_cors(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
+
 
 pending_broadcasts = {}
 skill_sessions = {}
