@@ -1,8 +1,6 @@
 python-telegram-bot==20.7
-APScheduler==3.6.3
-tornado==6.1
-requests
-psycopg2-binary
 flask
+psycopg2-binary
+openai
 stripe
 gunicorn
