@@ -3,4 +3,7 @@ flask
 psycopg2-binary
 openai
 stripe
+groq
+mutagen
+Pillow
 gunicorn
