@@ -1711,6 +1711,8 @@ def main():
     application.add_handler(MessageHandler(filters.AUDIO, handle_audio))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_router))
 
+     time.sleep(10)
+ 
     application.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
